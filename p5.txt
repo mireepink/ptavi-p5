@@ -61,17 +61,19 @@ INVITE, ACK, OPTIONS, BYE, CANCEL, NOTIFY, REFER, MESSAGE
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
 
 9. Fijémonos en las tramas siguientes a la número 46:
- ** ¿Se registra con éxito en el primer intento?
- ** ¿Cómo sabemos si el registro se ha realizado correctamente o no?
- ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio)
+ ** ¿Se registra con éxito en el primer intento? No
+ ** ¿Cómo sabemos si el registro se ha realizado correctamente o no? No se registrará con éxito hasta el siguiente REGISTER en el que sí que recibirá el 200 ok esperado.
+ ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio) El primer REGISTER tiene un frame length de 523 bytes, y en el segundo se tienen 712 bytes además de añadirnos la información de la autorización en la cabecera del mensaje.
  ** ¿Cuánto es el valor del tiempo de expiración de la sesión? Indica las unidades.
-
+3600 segundos
 
 10. Una vez registrados, podemos efectuar una llamada. Vamos a probar con el servicio de eco de Ekiga que nos permite comprobar si nos hemos conectado correctamente. El servicio de eco tiene la dirección sip:500@ekiga.net. Veamos el INVITE de cerca.
  ** ¿Puede verse el nombre del que efectúa la llamada, así como su dirección SIP?
+Sí, puede verse el nombre como "Gregorio Robles" y la dirección sip como grex@ekipa.net
  ** ¿Qué es lo que contiene el cuerpo de la trama? ¿En qué formato/protocolo está?
- ** ¿Tiene éxito el primer intento? ¿Cómo lo sabes?
- ** ¿En qué se diferencia el segundo INVITE más abajo del primero? ¿A qué crees que se debe esto?
+Contiene los parámetros de inicialización de los flujos multimedia acordados entre las entidades que intervienen en la sesión. El protocolo que utiliza es SDP(session description protocol).
+ ** ¿Tiene éxito el primer intento? ¿Cómo lo sabes? No, puesto que es necesario enviar un nuevo INVITE. 
+ ** ¿En qué se diferencia el segundo INVITE más abajo del primero? ¿A qué crees que se debe esto? Al igual que en el segundo REGISTER enviado, en el nuevo INVITE nos aparece el un nuevo campo, esta vez el proxy-authorization.
 
 
 11. Una vez conectado, estudia el intercambio de tramas.
@@ -107,8 +109,8 @@ INVITE, ACK, OPTIONS, BYE, CANCEL, NOTIFY, REFER, MESSAGE
 
 
 15. Identifica la trama donde se finaliza la conversación.
- ** ¿Qué método SIP se utiliza?
- ** ¿En qué trama(s)?
+ ** ¿Qué método SIP se utiliza? BYE
+ ** ¿En qué trama(s)? 924
  ** ¿Por qué crees que se envía varias veces?
 
 
