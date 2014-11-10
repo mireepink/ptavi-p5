@@ -78,46 +78,69 @@ Contiene los parámetros de inicialización de los flujos multimedia acordados e
 
 11. Una vez conectado, estudia el intercambio de tramas.
  ** ¿Qué protocolo(s) se utiliza(n)? ¿Para qué sirven estos protocolos?
+Se usan RTP y RTCP. RTP se usa en el nivel de sesión para la transmisión de la información a tiempo real y RTCP se encarga de proporcionar información de control sobre la calidad de la transmisión.
  ** ¿Cuál es el tamaño de paquete de los mismos?
+214 bytes para RTP y 102 para RTCP
  ** ¿Se utilizan bits de padding?
+No. Podemos apreciarlo en el campo padding del mensaje, que nos aparece como False.
  ** ¿Cuál es la periodicidad de los paquetes que se envían?
+La periodicidad la podemos ver comprobando el campo timestamp.
+Si observamos un paquete G.711 vemos que se transmiten a 64kb/s, y teniendo en cuenta el timestamp de 160, serán 50 paquetes los que enviemos por segundo de 1280 bits, con un periodo de 1/50 que son 20ms.
  ** ¿Cuántos bits/segundo estamos enviando?
-
-
+64000 bits/segundo
 
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
 
 12. Vamos a ver más a fondo el intercambio RTP. En Telephony hay una opción RTP. Empecemos mirando los flujos RTP.
  ** ¿Cuántos flujos hay? ¿por qué?
+Si observamos en telephony-rtp-show all streams observamos que es dos el número de flujos en esta comunicación, uno de audio y otro de video.
  ** ¿Cuántos paquetes se pierden?
+No se pierde ningún paquete.
  ** ¿Cuál es el valor máximo del delta? ¿Y qué es lo que significa el valor de delta?
+El valor máximo del delta es para un flujo 1290.48 y en el otro 1290.44 ms
+El valor de la delta nos muestra el retardo o la latencia, es decir, el tiempo que invierte un paquete en ir de un punto origen a un punto destino.
  ** ¿Cuáles son los valores de jitter (medio y máximo)? ¿Qué quiere decir eso? ¿Estamos ante una conversación de calidad?
+EL valor medio del jitter para un flujo es 153.24 y para el otro 42.50
+Los valores máximos serán, respectivamente, 183.10 y 119.64
+El jitter es el parámetro que determina la variación temporal que experimenta el retardo en una transmisión de paquetes entre los puntos inicial y final de la comunicación. Si tenemos un jitter alto, no estaremos ante una conversación de calidad.
 
 
 13. Elige un paquete RTP de audio. Analiza el flujo de audio en Telephony -> RTP -> Stream Analysis.
  ** ¿Cuánto valen el delta y el jitter para el primer paquete que ha llegado?
+0 ambos.
  ** ¿Podemos saber si éste es el primer paquete que nos han enviado?
+Sí puesto que comenzamos a contar a partir de él el jitter y el delta.
  ** Los valores de jitter son menores de 10ms hasta un paquete dado. ¿Cuál?
+El 247
  ** ¿A qué se debe el cambio tan brusco del jitter?
+Observamos que el cambio brusco del jitter se aprecia en la variación del retardo del tiempo que aumenta considerablemente respecto a los anteriores.
  ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
+Sí, puesto que hay un cambio brusco en el aumento del tiempo o retardo con respecto al paquete anterior.
  ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
+La variabilidad de dicho retardo.
 
 
 14. En Telephony selecciona el menú VoIP calls. Verás que se lista la llamada de voz IP capturada en una ventana emergente. Selecciona esa llamada y pulsa el botón Graph.
  ** ¿Cuánto dura la conversación?
+24.80 segundos
  ** ¿Cuáles son sus SSRC? ¿Por qué hay varios SSRCs? ¿Hay CSRCs?
-
+Para paquetes G.711 (audio)-> Synchronization Source identifier: 0xbf4afd37 (3209362743)
+Para paquetes H.261 (video)-> Synchronization Source identifier: 0x43306582 (1127245186)
+Hay varios SSRCs porque hay dos tipos de flujo, uno de audio y otro de video.
+En RTP el campo Contributing source identifiers count está a cero, pero para paquetes RTCP como el 606 nos aparece a 1 con valor -> SSRC/CSRC 0xBF4AFD37
 
 15. Identifica la trama donde se finaliza la conversación.
  ** ¿Qué método SIP se utiliza? BYE
  ** ¿En qué trama(s)? 924
  ** ¿Por qué crees que se envía varias veces?
-
+Porque estamos en UDP, y como no es fiable, lo manda varias veces para asegurarse de que llega.
 
 16. Finalmente, se cierra la aplicación de VozIP.
  ** ¿Por qué aparece una instrucción SIP del tipo REGISTER?
- ** ¿En qué trama sucede esto?
+Porque le enviamos al servidor de Ekiga uno con Expires=0 para cerrar la sesión.
+ ** ¿En qué trama sucede esto? En la 950
  ** ¿En qué se diferencia con la instrucción que se utilizó con anterioridad (al principio de la sesión)?
+Se diferencia en que el campo Expires quedará a 0.
 
 
 
